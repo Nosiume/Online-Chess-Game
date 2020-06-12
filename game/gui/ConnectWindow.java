@@ -11,14 +11,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import network.Client;
+import network.Server;
+import network.packet.Packet00Connect;
+import network.packet.Packet01PlayerList;
 
 /*
  * This window will ask if the user wants to : 
@@ -48,7 +56,7 @@ public class ConnectWindow extends JFrame {
 	private UserTypeWaitingRoom userType = UserTypeWaitingRoom.NONE;
 	
 	//Creates the empty window before adding elements with other functions
-	public ConnectWindow()
+	public ConnectWindow(boolean fullscreen)
 	{	
 		//Create window
 		super("Online Chess - Join a room");
@@ -56,11 +64,19 @@ public class ConnectWindow extends JFrame {
 		//Initialize
 		userNames = new ArrayList<JLabel>();
 		
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setSize(dim);
-		setUndecorated(true);
-		setLocation(0, 0);
+		if(fullscreen)
+		{
+			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+			setSize(dim);
+			setUndecorated(true);
+			setLocation(0, 0);
+		} else 
+		{
+			setSize(1280, 720);
+			setLocationRelativeTo(null);
+		}
 		
+		addWindowListener(new WaitingRoomWindowListener());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setIconImage(Launcher.ICON);
@@ -108,6 +124,26 @@ public class ConnectWindow extends JFrame {
 		host.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Creates network components
+				try {
+					Launcher.SERVER = new Server();
+					Launcher.CLIENT = new Client(InetAddress.getLocalHost());
+				} catch (UnknownHostException e1) {
+					e1.printStackTrace();
+				}
+				
+				//Sends connection packet
+				Packet00Connect packet = new Packet00Connect(username.getText());
+				packet.writeData(Launcher.CLIENT);
+				
+				//Ask for player list (will be updated when sent back to client)
+				Packet01PlayerList packetList = new Packet01PlayerList();
+				packetList.writeData(Launcher.CLIENT);
+				
+				//Saving username
+				Launcher.USERNAME = username.getText().trim();
+				
+				//Display update
 				cleanScreen();
 				waitingRoomServerSide(username.getText());
 			}
@@ -138,6 +174,26 @@ public class ConnectWindow extends JFrame {
 		join.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Initializing server components
+				try {
+					String host = JOptionPane.showInputDialog("Please enter host IPv4");
+					Launcher.CLIENT = new Client(InetAddress.getByName(host));
+				} catch (UnknownHostException e1) {
+					e1.printStackTrace();
+				}
+				
+				//Join packet
+				Packet00Connect packetJoin = new Packet00Connect(username.getText());
+				packetJoin.writeData(Launcher.CLIENT);
+				
+				//Ask for player list (will be updated when sent back to client)
+				Packet01PlayerList packetList = new Packet01PlayerList();
+				packetList.writeData(Launcher.CLIENT);
+				
+				//Saving username
+				Launcher.USERNAME = username.getText().trim();
+				
+				//Display update
 				cleanScreen();
 				waitingRoomClientSide(username.getText());
 			}
@@ -194,8 +250,6 @@ public class ConnectWindow extends JFrame {
 		playerList.setForeground(Color.WHITE);
 		playerList.setBounds((int) (getWidth() / 1.5), getHeight() / 4, 600, 200);
 		
-		addUser(ign);
-		
 		panel.add(nameLabel);
 		panel.add(playerList);
 		panel.add(startBtn);
@@ -241,8 +295,6 @@ public class ConnectWindow extends JFrame {
 		playerList.setForeground(Color.WHITE);
 		playerList.setBounds((int) (getWidth() / 1.5), getHeight() / 4, 600, 200);
 		
-		addUser(ign);
-		
 		panel.add(nameLabel);
 		panel.add(playerList);
 		panel.add(startBtn);
@@ -264,7 +316,9 @@ public class ConnectWindow extends JFrame {
 				userType != UserTypeWaitingRoom.CLIENT)
 		{
 			startBtn.setEnabled(true);
+			startBtn.update(panel.getGraphics()); // To avoid graphic duplication of buttons
 		}
+		panel.update(panel.getGraphics());
 	}
 	
 	//Removes all elements currently on the screen
@@ -274,6 +328,17 @@ public class ConnectWindow extends JFrame {
 		{
 			panel.remove(c);
 		}
+	}
+
+	//Clears the player list display
+	public void clearPlayerList() 
+	{
+		for(JLabel label : this.userNames)
+		{
+			panel.remove(label);
+		}
+		this.userNames.clear();
+		panel.update(panel.getGraphics());
 	}
 	
 }
