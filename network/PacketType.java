@@ -5,7 +5,8 @@ public enum PacketType {
 	INVALID(-1),
 	CONNECT(00),
 	PLAYERLIST(01),
-	DISCONNECT(02);
+	DISCONNECT(02),
+	START(03);
 	
 	private int id;
 	

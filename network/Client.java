@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import network.packet.Packet00Connect;
 import network.packet.Packet01PlayerList;
 import network.packet.Packet02Disconnect;
+import network.packet.Packet03Start;
 
 public class Client implements Runnable {
 
@@ -70,6 +71,10 @@ public class Client implements Runnable {
 		case PLAYERLIST:
 			Packet01PlayerList pPlayerList = new Packet01PlayerList(data.getBytes());
 			pPlayerList.onClientReceive(address);
+			break;
+		case START:
+			Packet03Start pStart = new Packet03Start();
+			pStart.onClientReceive(address);
 			break;
 		default:
 			System.err.println("Unknown packet on client side. [" + type.toString() + "]");
