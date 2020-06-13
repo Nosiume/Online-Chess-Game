@@ -1,4 +1,4 @@
-package game.gui;
+package game.waitingroom;
 
 import game.Launcher;
 

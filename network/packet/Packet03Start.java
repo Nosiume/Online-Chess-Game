@@ -1,7 +1,9 @@
 package network.packet;
 
 import game.Launcher;
+import game.game.GameWindow;
 import game.settings.GameStats;
+import game.settings.GameValues;
 
 import java.net.InetAddress;
 
@@ -18,6 +20,8 @@ public class Packet03Start extends Packet {
 	public void onClientReceive(InetAddress addr) {
 		Launcher.connectWindow.close();
 		GameStats.started = true;
+		GameValues.window = new GameWindow();
+		GameValues.window.loop();
 	}
 
 	@Override

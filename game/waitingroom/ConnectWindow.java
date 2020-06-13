@@ -1,4 +1,4 @@
-package game.gui;
+package game.waitingroom;
 
 import game.Launcher;
 
@@ -15,7 +15,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -316,16 +315,6 @@ public class ConnectWindow extends JFrame {
 	public void close()
 	{
 		setVisible(false);
-		
-		//Debugging code
-		try {
-			TimeUnit.SECONDS.sleep(3);
-			JOptionPane.showMessageDialog(null, "Starting game", "Exiting app", JOptionPane.WARNING_MESSAGE);
-			System.exit(0);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	//Adds User to player list
