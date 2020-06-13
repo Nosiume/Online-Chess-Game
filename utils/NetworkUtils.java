@@ -10,7 +10,7 @@ public class NetworkUtils {
 	{
 		for(NetworkClient c : clients)
 		{
-			if(c.getUsername() == name)
+			if(c.getUsername().trim().equals(name.trim()))
 			{
 				return c;
 			}

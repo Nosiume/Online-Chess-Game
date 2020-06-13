@@ -26,6 +26,9 @@ public class Packet02Disconnect extends Packet {
 	@Override
 	public void onClientReceive(InetAddress address) 
 	{
+		//When we receive it, that means the client has been removed from the
+		//Online player's list on the server data
+		//So we ask for the player list again to update
 		Packet01PlayerList packet = new Packet01PlayerList();
 		packet.writeData(Launcher.CLIENT);
 	}

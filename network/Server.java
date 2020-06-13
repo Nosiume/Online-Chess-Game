@@ -55,13 +55,8 @@ public class Server implements Runnable {
 	
 	public void stop()
 	{
-		try {
-			running = false;
-			serverThread.join();
-			socket.close();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		socket.close();
+		running = false;
 	}
 	
 	private void parsePacket(String data, InetAddress address, int port)

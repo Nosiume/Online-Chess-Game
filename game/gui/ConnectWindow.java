@@ -76,8 +76,8 @@ public class ConnectWindow extends JFrame {
 			setLocationRelativeTo(null);
 		}
 		
-		addWindowListener(new WaitingRoomWindowListener());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		addWindowListener(new WaitingRoomWindowListener());
 		setResizable(false);
 		setIconImage(Launcher.ICON);
 		setVisible(true);
@@ -132,20 +132,20 @@ public class ConnectWindow extends JFrame {
 					e1.printStackTrace();
 				}
 				
+				//Saving username
+				Launcher.USERNAME = username.getText().trim();
+				
 				//Sends connection packet
-				Packet00Connect packet = new Packet00Connect(username.getText());
+				Packet00Connect packet = new Packet00Connect(Launcher.USERNAME);
 				packet.writeData(Launcher.CLIENT);
 				
 				//Ask for player list (will be updated when sent back to client)
 				Packet01PlayerList packetList = new Packet01PlayerList();
 				packetList.writeData(Launcher.CLIENT);
 				
-				//Saving username
-				Launcher.USERNAME = username.getText().trim();
-				
 				//Display update
 				cleanScreen();
-				waitingRoomServerSide(username.getText());
+				waitingRoomServerSide(Launcher.USERNAME);
 			}
 		});
 		host.setForeground(Color.white);
@@ -182,20 +182,20 @@ public class ConnectWindow extends JFrame {
 					e1.printStackTrace();
 				}
 				
+				//Saving username
+				Launcher.USERNAME = username.getText().trim();
+				
 				//Join packet
-				Packet00Connect packetJoin = new Packet00Connect(username.getText());
+				Packet00Connect packetJoin = new Packet00Connect(Launcher.USERNAME);
 				packetJoin.writeData(Launcher.CLIENT);
 				
 				//Ask for player list (will be updated when sent back to client)
 				Packet01PlayerList packetList = new Packet01PlayerList();
 				packetList.writeData(Launcher.CLIENT);
 				
-				//Saving username
-				Launcher.USERNAME = username.getText().trim();
-				
 				//Display update
 				cleanScreen();
-				waitingRoomClientSide(username.getText());
+				waitingRoomClientSide(Launcher.USERNAME);
 			}
 		});
 		join.setForeground(Color.white);
@@ -299,6 +299,12 @@ public class ConnectWindow extends JFrame {
 		panel.add(playerList);
 		panel.add(startBtn);
 		panel.update(panel.getGraphics());
+	}
+	
+	//Close waiting room
+	public void close()
+	{
+		setVisible(false);
 	}
 	
 	//Adds User to player list

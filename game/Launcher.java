@@ -29,7 +29,7 @@ public class Launcher {
 		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(GLOBAL_FONT);
 		ICON = ImageIO.read(new File("res/images/icon.png"));
 		
-		connectWindow = new ConnectWindow(false);
+		connectWindow = new ConnectWindow(true);
 		connectWindow.defaultElements();
 	}
 	
