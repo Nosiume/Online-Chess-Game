@@ -2,18 +2,12 @@ package graphics;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
 public class DisplayManager {
 
 	private static boolean glfwInitialized = false;
-
-	//Key listeners map
-	private static Map<Long, GLFWKeyListener> keyListeners = new HashMap<Long, GLFWKeyListener>();
 	
 	//Creates a full screen window using LWJGL3
 	public static long createWindow(String title) {
@@ -54,13 +48,5 @@ public class DisplayManager {
 		
 		return window; // Returns the created window's idea
 	}
-	
-	//Binds a key listener to the pasted window
-	public static void addKeyListener(long window, GLFWKeyListener listener)
-	{
-		keyListeners.put(window, listener);
-		GLFW.glfwSetKeyCallback(window, (windowID, key, scancode, action, mods) -> {
-			keyListeners.get(window).keyUpdate(window, key, scancode, action, mods);
-		});
-	}
+
 }
